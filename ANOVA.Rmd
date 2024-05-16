@@ -1,0 +1,87 @@
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+```{r, message=FALSE, warning=FALSE}
+plant_growth_key <- read_csv("~/Assignments/midterm-SIV0625TriX/input/plant_growth_key.csv")
+plant_growth_data <- read_csv("~/Assignments/midterm-SIV0625TriX/input/plant_growth_data.csv")
+plant_growth <- left_join(plant_growth_data, plant_growth_key, by = "pot")
+```
+
+**One-way ANOVA for R500**  
+```{r}
+plant_growth_R500 <- subset(plant_growth, genotype == "R500")
+aovR500 <- aov(leaf_length ~ trt, data = plant_growth_R500)
+summary(aovR500)
+```
+measurement variable: leaf_length (leaf length)  
+nominal variable: trt (treatment)  
+H0: Means of leaf length are the same for different treatments  
+Ha: They are not all the same  
+P-value > 0.05  
+Accept H0: Evidence is not strong enough to reject null hypothesis. Leaf length might not be affected by treatment for R500 variants.  
+
+
+**One-way ANOVA for FPsc**  
+```{r}
+plant_growth_FPsc <- subset(plant_growth, genotype == "FPsc")
+aovFPsc <- aov(leaf_length ~ trt, data = plant_growth_FPsc)
+summary(aovFPsc)
+```
+measurement variable: leaf_length (leaf length)  
+nominal variable: trt (treatment)  
+H0: Means of leaf length are the same for different treatments  
+Ha: They are not all the same  
+P-value < 0.05  
+Reject H0: Statistically significant evidence suggests that treatment affects leaf length distribution for FPsc variants.  
+
+
+**One-way ANOVA for live microbes**  
+```{r}
+plant_growth_live <- subset(plant_growth, trt == "live")
+aovLive <- aov(leaf_length ~ genotype, data = plant_growth_live)
+summary(aovLive)
+```
+measurement variable: leaf_length (leaf length)  
+nominal variable: genotype  
+H0: Means of leaf length are the same for different genotypes  
+Ha: They are not all the same  
+P-value < 0.05  
+Reject H0: Statistically significant evidence suggests that genotype affects leaf length distribution when live microbe is present in soil.   
+
+
+**One-way ANOVA for dead microbes**  
+```{r}
+plant_growth_dead <- subset(plant_growth, trt == "dead")
+aovDead <- aov(leaf_length ~ genotype, data = plant_growth_dead)
+summary(aovDead)
+```
+measurement variable: leaf_length (leaf length)  
+nominal variable: genotype  
+H0: Means of leaf length are the same for different genotypes  
+Ha: They are not all the same  
+P-value < 0.05  
+Reject H0: Statistically significant evidence suggests that genotype affects leaf length distribution when dead microbe is present in soil.  
+
+
+**Two-way ANOVA**
+```{r}
+aovTwoWay <- aov(leaf_length ~ genotype + trt + genotype:trt, data = plant_growth)
+summary(aovTwoWay)
+```
+measurement variable: leaf length  
+nominal variable 1: genotype  
+nominal variable 2: treatment  
+
+H0_1: Means of leaf length are equal for different genotypes.  
+p < 0.05  
+Reject H0_1: Genotype affects leaf length.  
+
+H0_2: Means of leaf length are equal for different treatments.  
+p < 0.05  
+Reject H0_2: Treatment affects leaf length.  
+
+H0_3: No interaction between genotype and treatment - the effect of one of them don't depend on the value of the other.  
+p > 0.05  
+Accept H0_3: There is no significant evidence supports that genotype would affect the response of leaf length to treatments.  
+
